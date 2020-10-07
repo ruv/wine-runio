@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<forth xmlns="http://forth.org.ru/ForthML/">
+
+<def name="show-help">
+  <text>runio v1.0, 2020-10-07 https://github.com/ruv/wine-runio
+Usage: runio [OPTIONS] PROGRAM [ARGUMENTS...]
+It runs the specified program, and waits when its stdout
+is depleted. It's needed as a workaround for some problems in WineHQ
+when runing a Linux command-line program with input/output redirection.
+
+Due to a flaw in WineHQ (see bug#18335), a Windows process cannot detect
+whether a child Linux process is terminated.
+Due to a bug in WineHQ (see https://stackoverflow.com/a/45545068/1300170),
+it incorrectly closes the inherited handle when its original is closed.
+
+Options:
+  --help, -h          Show this help.
+  --no-stdin, -n      Pass nothing to the stdin of the program.
+  --chdir dir         Change the current directory.
+
+NB: if the child program is interactive, and it's terminated, it's needed
+to send the EOF signal into runio for termination (^D, Ctrl+D in Linux;
+Ctrl+Z in Windows).
+
+Examples:
+  runio -n /bin/bash -c "echo test; sleep 1" &amp;&amp; echo the child is finished
+  echo echo wating a second; sleep 1; echo finished | runio /bin/bash
+</text> TYPE
+</def>
+
+</forth>

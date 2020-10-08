@@ -106,6 +106,7 @@
 
 
 <g title="Some helpers">
+  <slot-enum> verbosity </slot-enum>
 
   <def name="=?" ds=" x1 x2 -- x1 false | true ">
     OVER = DUP <if> NIP </if>
@@ -122,7 +123,12 @@
   </def>
 
   <def name="runio" ds=" d-txt-commandline -- ">
-    p::runio  ?show-error-halt ?show-error-halt
+    p::runio <rem ds=" ior-input ior-output "/>
+    verbosity <if>
+      >R DUP <if> DUP <emit>runio, info, input  error: </emit> . CR </if>
+      R> DUP <if> DUP <emit>runio, info, output error: </emit> . CR </if>
+    </if>
+    ?show-error-halt ?show-error-halt
   </def>
 </g>
 
@@ -131,6 +137,10 @@
 <include href="help.f.xml"/>
 
 <wordlist name="option-name" comment="Command line options">
+
+  <def name="--verbose"> 1 verbosity! </def>
+  <alias name="-v" word="--verbose"/>
+
   <def name="--stdin"> FALSE p::input-empty! </def>
   <def name="--no-stdin"> TRUE p::input-empty! </def>
   <alias name="-n" word="--no-stdin"/>
@@ -143,6 +153,7 @@
 
   <alias name="--chdir" word="--chdir"/>
   <def name="--run"> PARSE-STRING runio </def>
+
 </wordlist>
 
 

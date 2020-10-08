@@ -2,7 +2,7 @@
 <forth xmlns="http://forth.org.ru/ForthML/">
 
 <def name="show-help">
-  <text>runio v1.0, 2020-10-07 https://github.com/ruv/wine-runio
+  <text>runio v1.1, 2020-10-07 https://github.com/ruv/wine-runio
 Usage: runio [OPTIONS] PROGRAM [ARGUMENTS...]
 It runs the specified program, and waits when its stdout
 is depleted. It's needed as a workaround for some problems in WineHQ
@@ -16,6 +16,7 @@ it incorrectly closes the inherited handle when its original is closed.
 Options:
   --help, -h          Show this help.
   --no-stdin, -n      Pass nothing to the stdin of the program.
+  --verbose, -v       Show all non zero error codes (in stderr).
   --chdir dir         Change the current directory.
 
 NB: if the child program is interactive, and it's terminated, it's needed

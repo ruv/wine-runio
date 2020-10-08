@@ -8,11 +8,11 @@
 
 
 <orthodoxy>
-  REQUIRE /PROCESS_INFORMATION    devel/~pinka/lib/win/process-child.f
-  REQUIRE Wait                    devel/~pinka/lib/multi/Synchr.f
-  REQUIRE LAUNCH                  devel/~pinka/lib/multi/launch.f
-  REQUIRE PARSE-STRING            devel/~pinka/lib/parse-string.f
-  REQUIRE CASE-INS                lib/ext/caseins.f
+  REQUIRE-WORD /PROCESS_INFORMATION     devel/~pinka/lib/win/process-child.f
+  REQUIRE-WORD Wait                     devel/~pinka/lib/multi/Synchr.f
+  REQUIRE-WORD LAUNCH                   devel/~pinka/lib/multi/launch.f
+  REQUIRE-WORD PARSE-STRING             devel/~pinka/lib/parse-string.f
+  REQUIRE-WORD CASE-INS                 lib/ext/caseins.f
 
   CASE-INS OFF
 </orthodoxy>
@@ -27,7 +27,7 @@
 </g>
 
 <develop wordlist="p">
-  <slot> producer-in bufsize error-process-input error-process-output input-empty h-input h-output </slot>
+  <slot-enum> producer-in bufsize error-process-input error-process-output input-empty h-input h-output </slot-enum>
   <init> 4050 bufsize! </init>
   <handler event="cleanup">
     0 error-process-input!
@@ -65,18 +65,18 @@
     'transmit-stdout CATCH error-process-output!
   </def>
 
-  <def name="perform-io-with" ds=" xt-producer xt-consumer -- ior1 ior2 ">
+  <def name="perform-io-with" ds=" xt-producer xt-consumer -- ior-input ior-output ">
     assume-consumer assume-producer perform-io
     error-process-input error-process-output
   </def>
 
-  <def name="(perform-io)" ds=" -- ior1 ior2">
+  <def name="(perform-io)" ds=" -- ior-input ior-output">
     <q> h-input READOUT-FILE THROW </q>
     <q> h-output WRITE-FILE THROW </q>
     perform-io-with
   </def>
 
-  <def name="runio" ds=" d-txt-commandline -- ior1 ior2 ">
+  <def name="runio" ds=" d-txt-commandline -- ior-input ior-output ">
     <fire event="cleanup"/>
     commandline!
     start-simple (perform-io)
@@ -86,7 +86,7 @@
 
 
 <g title="Switching among stdin/stderr for printing operations">
-  <slot>h-stdout-orig</slot>
+  <slot-enum>h-stdout-orig</slot-enum>
 
   <def name="default-to-stderr" ds=" -- ">
     h-stdout-orig <if-exit/>
@@ -147,7 +147,7 @@
 
 
 
-<g title="Parse command line options">
+<g title="Eval command line options">
 
   <def name="next-option?" ds=" -- d-txt flag ">
     PARSE-NAME DUP <return-false/>
@@ -155,7 +155,7 @@
     2DUP `- MATCH-HEAD AND 0NE NIP
   </def>
 
-  <def name="parse-options" ds=" d-txt -- d-txt-commandline ">
+  <def name="eval-options" ds=" d-txt -- d-txt-commandline ">
     <q>
       <repeat> next-option? <while/>
         option-name OBEY <unless>
@@ -166,9 +166,9 @@
     </q> EVALUATE-WITH
   </def>
 
-  <def name="(parse-commandline)" ds=" -- d-txt-commandline ">
+  <def name="(eval-commandline)" ds=" -- d-txt-commandline ">
     COMMANDLINE-OPTIONS TRIM  DUP <unless> 2DROP default-to-stdout show-help BYE</unless>
-    parse-options
+    eval-options
   </def>
 </g>
 
@@ -177,7 +177,7 @@
 <def name="(main)" ds=" -- ">
   H-STDIN H-STDOUT p::assume-io
   default-to-stderr <fire event="startup"/>
-  (parse-commandline) DUP <if> runio </if> BYE
+  (eval-commandline) DUP <if> runio </if> BYE
 </def>
 
 
